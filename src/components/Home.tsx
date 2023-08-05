@@ -5,14 +5,7 @@ function Home() {
     <div>
       <h1>Home</h1>
       <button>go to About</button>
-      <Detail />
     </div>
-  )
-}
-
-function Detail() {
-  return (
-    <div>Detail</div>
   )
 }
 
