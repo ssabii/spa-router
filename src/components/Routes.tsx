@@ -1,7 +1,7 @@
 import React from 'react'
 import Route from './Route';
 import { RouteProps } from './Route';
-import { useRouter } from './Router';
+import { useRouter } from '../hooks';
 
 interface RoutesProps {
   children: React.ReactNode;

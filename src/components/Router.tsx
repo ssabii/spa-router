@@ -1,11 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-
-interface RouterContextProps {
-  pathname: string
-  push: (url: string) => void
-}
-
-const RouterContext = React.createContext<RouterContextProps | null>(null)
+import { RouterContext } from '../context'
 
 interface RouterProps {
   children: React.ReactNode
@@ -38,14 +32,6 @@ const Router = ({ children }: RouterProps) => {
   )
 }
 
-export const useRouter = () => {
-  const context = React.useContext(RouterContext)
 
-  if (!context) {
-    throw new Error('useRouter must be used within a <Router> component.')
-  }
-
-  return context
-}
 
 export default Router
