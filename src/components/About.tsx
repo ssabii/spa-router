@@ -1,8 +1,11 @@
+import { useRouter } from "./Router"
+
 function About() {
+  const router = useRouter();
   return (
     <div>
       <h1>About</h1>
-      <button>go to Home</button>
+      <button onClick={() => router.push('/')}>go to Home</button>
     </div>
   )
 }
