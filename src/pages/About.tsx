@@ -1,4 +1,4 @@
-import { useRouter } from "./Router"
+import { useRouter } from "../components/Router"
 
 function About() {
   const router = useRouter();

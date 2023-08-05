@@ -1,6 +1,6 @@
 import Route from './components/Route'
-import Home from './components/Home'
-import About from './components/About'
+import Home from './pages/Home'
+import About from './pages/About'
 import Routes from './components/Routes'
 import Router from './components/Router'
 
