@@ -22,7 +22,7 @@ const Router = ({ children }: RouterProps) => {
   useEffect(() => {
     const popState = (e: PopStateEvent) => {
       const state = e.state as { path: string }
-      const { path } = state
+      const path = state?.path || '/'
       setPathname(path)
     }
 
