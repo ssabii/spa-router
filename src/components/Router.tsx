@@ -15,15 +15,14 @@ const Router = ({ children }: RouterProps) => {
   const [pathname, setPathname] = useState(window.location.pathname)
 
   const push = useCallback((url: string) => {
-    const data: Data = { path: url }
-
     setPathname(url)
-    window.history.pushState(data, '', url)
+    window.history.pushState({ path: url }, '', url)
   }, [])
 
   useEffect(() => {
     const popState = (e: PopStateEvent) => {
-      const path = (e.state as Data).path;
+      const state = e.state as { path: string }
+      const { path } = state
       setPathname(path)
     }
 
@@ -37,10 +36,6 @@ const Router = ({ children }: RouterProps) => {
       {children}
     </RouterContext.Provider>
   )
-}
-
-interface Data {
-  path: string;
 }
 
 export const useRouter = () => {
