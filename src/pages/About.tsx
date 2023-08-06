@@ -1,4 +1,4 @@
-import { useRouter } from "../components/Router"
+import { useRouter } from "../hooks"
 
 function About() {
   const router = useRouter();
