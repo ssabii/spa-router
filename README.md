@@ -35,12 +35,70 @@ const { push } = useRouter();
 
 `<Route>` 컴포넌트는 `path`와 `component` props를 가지고 있으며 어떠한 역할도 하지 않는다. `<Routes>` 컴포넌트 안에서만 사용될 수 있게 에러를 던지는 역할만 한다. [react-router](https://github.com/remix-run/react-router)에서 구현한 방식과 동일한 방식으로 구현하였다.
 
+```tsx
+export interface RouteProps {
+  path: string;
+  component: React.ReactNode;
+}
+
+const Route = (_props: RouteProps): React.ReactElement | null => {
+  throw new Error('<Route> component must be used inside a <Routes> component.');
+}
+```
+
 ### Routes
 
-현재 라우터의 경로와 일치하는 컴포넌트를 렌더링 하는 역할을 한다. `children`을 순회하면서 유효한 엘리먼트인지 확인하고 현재 경로와 일치하는지 확인한 후에 `<Route>` props의 `component`를 클론해서 렌더링하게 구현하였다. queryString, pathVariable 등은 제외하고 단순히 경로가 일치하는지만 확인하게 구현하였다.
+현재 라우터의 경로와 일치하는 컴포넌트를 렌더링 하는 역할을 한다.
+
+`children`을 순회하면서 유효한 엘리먼트인지 확인하고 현재 경로와 일치하는지 확인한 후에 `<Route>` props의 `component`를 클론해서 렌더링하게 구현하였다. `query string`, `path variable` 등은 제외하고 단순히 경로가 일치하는지만 확인하게 구현하였다.
 
 ### Router
 
-Context API를 사용해서 현재 경로(`window.location.pathname`)의 상태를 관리하는 역할을 한다. 또한 `push` 함수를 제공해서 라우터를 이동시킬 수 있게 하였고, 뒤로가기 이벤트(`popstate`)가 발생했을 때 현재 경로의 상태를 변경시켜서 리렌더링이 발생할 수 있게 구현하였다.
+Context API를 사용해서 현재 경로(`window.location.pathname`)의 상태를 관리하는 역할을 한다.
+
+`push` 함수를 제공해서 라우터를 이동시킬 수 있게 하였고, 뒤로가기 이벤트(`popstate`)가 발생했을 때 `popstate`에 이벤트를 등록하여 현재 경로의 상태를 변경시켜서 리렌더링이 발생할 수 있게 구현하였다.
+
+```tsx
+const Router = ({ children }: RouterProps) => {
+  const [pathname, setPathname] = useState(window.location.pathname)
+
+  const push = useCallback((url: string) => {
+    setPathname(url)
+    window.history.pushState({ path: url }, '', url)
+  }, [])
+
+  useEffect(() => {
+    const popState = (e: PopStateEvent) => {
+      const state = e.state as { path: string }
+      const path = state?.path || '/'
+      setPathname(path)
+    }
+
+    window.addEventListener('popstate', popState)
+
+    return () => window.removeEventListener('popstate', popState)
+  }, [])
+
+  return (
+    <RouterContext.Provider value={{ pathname, push }}>
+      {children}
+    </RouterContext.Provider>
+  )
+}
+```
 
 `useRouter()` hooks를 만들어 하위 컴포넌트에서 라우터 상태에 접근할 수 있게 구현하였다.
+
+```tsx
+import RouterContext from '../context/RouterContext'
+
+const useRouter = () => {
+  const context = React.useContext(RouterContext)
+
+  if (!context) {
+    throw new Error('useRouter must be used within a <Router> component.')
+  }
+
+  return context
+}
+```
